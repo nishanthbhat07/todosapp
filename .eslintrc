@@ -1,0 +1,90 @@
+{
+    "env": {
+      "browser": true,
+      "es2021": true,
+      "react-native/react-native": true
+    },
+    "extends": [
+      // "plugin:react/recommended",
+      "airbnb",
+      "plugin:react-native/all",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:prettier/recommended",
+      "prettier"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "ecmaFeatures": {
+        "jsx": true
+      },
+      "ecmaVersion": 12,
+      "sourceType": "module"
+    },
+    "overrides": [
+      {
+        "files": ["**/*.ts", "**/*.tsx"],
+        "plugins": ["@typescript-eslint"],
+        "extends": [
+          "eslint:recommended",
+          "plugin:@typescript-eslint/recommended"
+        ],
+        "parser": "@typescript-eslint/parser",
+        "rules": {
+          "no-shadow": "off",
+          "no-useless-catch": [2],
+          "@typescript-eslint/no-use-before-define": "off",
+          "react/prop-types": "off"
+        }
+      }
+    ],
+    "settings": {
+      "import/resolver": {
+        "node": {
+          "extensions": [".ts", ".tsx",".js"]
+        }
+      }
+    },
+    "plugins": [
+      "react",
+      "react-native",
+      "react-hooks",
+      "@typescript-eslint",
+      "jsx-a11y",
+      "import",
+      "eslint-plugin-prettier",
+      "eslint-plugin-react",
+      "filenames",
+      "prefer-arrow"
+    ],
+    "rules": {
+      "no-console": "warn",
+      "prettier/prettier": "error",
+      "no-unused-vars": "error",
+      "import/prefer-default-export": "off",
+      "react/function-component-definition":"off",
+      "import/extensions": [
+        "error",
+        "ignorePackages",
+        {
+          "js": "never",
+          "jsx": "never",
+          "ts": "never",
+          "tsx": "never"
+        }
+     ],
+     "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".ts"] }],
+     "max-params": ["error", 3],
+     "react/style-prop-object":"off",
+     "react/prop-types": [
+      "error",
+      {
+        "ignore": ["style"]
+      }
+    ]
+    },
+    "globals": {
+      "__DEV__": true,
+      "FormData": true
+    }
+  }
+  
