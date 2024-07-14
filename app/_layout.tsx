@@ -1,10 +1,11 @@
-import { StyleSheet } from "react-native";
+import { LogBox, StyleSheet } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Slot } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "../global.css";
+import ReplicacheProvider from "../src/contexts/replicache";
 
 const queryClient = new QueryClient();
 const styles = StyleSheet.create({
@@ -13,13 +14,16 @@ const styles = StyleSheet.create({
   },
 });
 
+LogBox.ignoreAllLogs();
 const AppLayout = () => {
   return (
     <GestureHandlerRootView style={styles.root}>
       <SafeAreaView className="bg-red">
         <QueryClientProvider client={queryClient}>
-          {/* <Stack screenOptions={{ headerShown: false }} /> */}
-          <Slot />
+          <ReplicacheProvider>
+            {/* <Stack screenOptions={{ headerShown: false }} /> */}
+            <Slot />
+          </ReplicacheProvider>
         </QueryClientProvider>
       </SafeAreaView>
     </GestureHandlerRootView>

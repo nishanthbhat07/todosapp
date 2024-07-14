@@ -80,7 +80,9 @@
       {
         "ignore": ["style"]
       }
-    ]
+    ],
+    "react/jsx-props-no-spreading":"off",
+    "react/jsx-no-constructed-context-values":"off"
     },
     "globals": {
       "__DEV__": true,

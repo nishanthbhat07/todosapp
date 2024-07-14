@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @media (min-width: 640px) {
     .text-root {
       --font-size-dynamic: 16px;
