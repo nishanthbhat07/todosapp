@@ -21,6 +21,7 @@ module.exports = {
       textColorSecondary: "#7F8C8D",
       successColor: "#2ECC71",
       errorColor: "#E74C3C",
+      backdrop: "rgba(0,0,0,0.3)",
     },
     extend: {
       fontSize: {

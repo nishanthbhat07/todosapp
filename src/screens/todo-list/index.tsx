@@ -8,11 +8,18 @@ import {
 } from "react-native";
 import { useSubscribe } from "replicache-react";
 import { ReadTransaction } from "replicache";
+import { Dropdown } from "react-native-element-dropdown";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import Card from "../../components/card";
 import { useReplicache } from "../../contexts/replicache";
+import { useSpaceIDList } from "./hooks";
+import IconWrapper from "../../components/icon";
+import styles from "./styles";
+import { colors } from "../../contants/colors";
 
 const TodoList = () => {
-  const { replicacheInstance } = useReplicache();
+  const { replicacheInstance, setListId, listId } = useReplicache();
+  const { spaceIds, createSpaceId } = useSpaceIDList();
   const todos = useSubscribe(
     replicacheInstance,
     async (tx: ReadTransaction) => {
@@ -22,7 +29,6 @@ const TodoList = () => {
     [],
     [replicacheInstance],
   );
-
   todos.sort((a, b) => a.sort - b.sort);
   const [todoName, setTodoName] = useState("");
 
@@ -33,40 +39,88 @@ const TodoList = () => {
       });
     };
   };
+  const updateTodos = (id: number, todos: { title: string }) => {
+    return async () => {
+      await replicacheInstance.mutate.updateTodo({
+        id,
+        ...todos,
+      });
+    };
+  };
 
   const addTodos = async () => {
     await replicacheInstance.mutate.createTodo({
-      id: new Date().toISOString(),
       completed: false,
       title: todoName.trim(),
     });
+    setTodoName("");
+  };
+
+  const toggleTodosCompleted = (id: number, completed: boolean) => {
+    return async () => {
+      await replicacheInstance.mutate.updateTodo({
+        id,
+        completed,
+      });
+    };
   };
 
   return (
-    <View>
-      <View className="flex flex-row justify-evenly space-x-2 p-[10px] my-[10%] items-center">
+    <Animated.View entering={FadeInDown} className="flex grow-1 h-[100%]">
+      <Dropdown
+        style={styles.dropdown}
+        placeholderStyle={styles.placeholderStyle}
+        selectedTextStyle={styles.selectedTextStyle}
+        value={listId}
+        placeholder="Select Space"
+        labelField="id"
+        valueField="id"
+        data={spaceIds}
+        onChange={(item) => {
+          setListId(item.id);
+        }}
+        renderLeftIcon={() => (
+          <IconWrapper
+            style="mr-[3%] self-center items-center"
+            onPress={createSpaceId}
+            variant="MaterialIcons"
+            name="add-circle"
+            size={20}
+            color={colors.primaryColor}
+          />
+        )}
+      />
+      <Text className="px-8">Click the Plus icon to create new space</Text>
+      <View className="flex flex-row justify-evenly p-4 mt-[10%] items-center">
         <TextInput
+          value={todoName}
           onChangeText={(val) => setTodoName(val)}
           placeholder="Add a new task"
           placeholderTextColor="grey"
-          className="w-[80%] p-[2%] rounded-[5] border border-[black]"
+          className="w-3/4 p-[3%] rounded-[5] border border-textColorSecondary"
         />
         <TouchableOpacity
           onPress={addTodos}
           activeOpacity={0.65}
-          className="px-[4%] py-[2%] text-center rounded-[5] bg-primaryColor"
+          className="px-[4%] py-[3%] text-center rounded-[5] bg-primaryColor"
         >
           <Text className="text-white font-medium">Add</Text>
         </TouchableOpacity>
       </View>
       <FlatList
+        contentContainerClassName="mt-[2%] mx-[5%]"
         keyExtractor={(item) => item.id}
         data={todos}
         renderItem={({ item }) => (
-          <Card item={item} deleteTodos={deleteTodos} />
+          <Card
+            item={item}
+            toggleTodos={toggleTodosCompleted}
+            deleteTodos={deleteTodos}
+            updateTodos={updateTodos}
+          />
         )}
       />
-    </View>
+    </Animated.View>
   );
 };
 

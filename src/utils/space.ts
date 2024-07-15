@@ -1,13 +1,13 @@
 /* eslint-disable no-useless-constructor */
 /* eslint-disable no-empty-function */
 import Axios from "axios";
+import { BASEURL } from "../apis";
 
 export class Space {
   constructor(private readonly fetchHost: string) {}
 
   public async exists(spaceID: string): Promise<boolean> {
     const spaceExistRes = await this.fetchJSON("spaceExists", spaceID);
-    console.log("Line10", spaceExistRes);
     if (
       spaceExistRes &&
       typeof spaceExistRes === "object" &&
@@ -20,7 +20,6 @@ export class Space {
 
   public async create(spaceID?: string): Promise<string> {
     const createSpaceRes = await this.fetchJSON("createSpace", spaceID);
-    console.log("Line23", createSpaceRes);
     if (
       createSpaceRes &&
       typeof createSpaceRes === "object" &&
@@ -46,7 +45,6 @@ export class Space {
           },
         },
       );
-      console.log("Line47", res.data);
       return res.data;
     } catch (e) {
       console.error(e);
@@ -54,3 +52,5 @@ export class Space {
     return "";
   }
 }
+
+export const space = new Space(BASEURL);

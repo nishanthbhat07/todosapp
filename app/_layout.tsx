@@ -1,10 +1,12 @@
-import { LogBox, StyleSheet } from "react-native";
+import { FlatList, LogBox, StyleSheet } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Slot } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "../global.css";
+import Toast from "react-native-toast-message";
+import { remapProps } from "nativewind";
 import ReplicacheProvider from "../src/contexts/replicache";
 
 const queryClient = new QueryClient();
@@ -15,6 +17,10 @@ const styles = StyleSheet.create({
 });
 
 LogBox.ignoreAllLogs();
+remapProps(FlatList, {
+  className: "style",
+  contentContainerClassName: "contentContainerStyle",
+});
 const AppLayout = () => {
   return (
     <GestureHandlerRootView style={styles.root}>
@@ -25,6 +31,7 @@ const AppLayout = () => {
             <Slot />
           </ReplicacheProvider>
         </QueryClientProvider>
+        <Toast position="bottom" bottomOffset={120} />
       </SafeAreaView>
     </GestureHandlerRootView>
   );

@@ -2,9 +2,10 @@ import React, { createContext, ReactNode, useContext, useMemo } from "react";
 import { ReadTransaction, Replicache } from "replicache";
 import { createReplicacheExpoSQLiteExperimentalCreateKVStore } from "@react-native-replicache/react-native-expo-sqlite";
 import EventSource from "react-native-sse";
+import { useMMKVStorage } from "react-native-mmkv-storage";
 import { BASEURL } from "../apis";
-import { Space } from "../utils/space";
 import { mutators } from "../utils/mutators";
+import MMKV from "../utils/mmkv";
 
 const ReplicacheContext = createContext(null);
 
@@ -21,20 +22,22 @@ export async function listTodos(tx: ReadTransaction) {
   return (await tx.scan().values().toArray()) as Todo[];
 }
 
-const space = new Space(BASEURL);
-
 const ReplicacheProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   // const [rep, setRep] = useState<Replicache | null>(null);
 
-  const [listId, setListId] = React.useState<string | null>(null);
+  const [listId, setListId] = useMMKVStorage<string | null>(
+    "spaceID",
+    MMKV,
+    null,
+  );
 
   const r = useMemo(
     () =>
       listId &&
       new Replicache({
-        licenseKey: "lfa8c867aa0fb4591bd15debe67232835",
+        licenseKey: process.env.EXPO_PUBLIC_LICENSE_KEY,
         pushURL: `${BASEURL}/api/replicache/push?spaceID=${listId}`,
         pullURL: `${BASEURL}/api/replicache/pull?spaceID=${listId}`,
         name: listId,
@@ -46,14 +49,14 @@ const ReplicacheProvider: React.FC<{ children: ReactNode }> = ({
     [listId],
   );
 
-  React.useEffect(() => {
-    if (listId !== null) return;
-    const createList = async () => {
-      const abc = await space.create();
-      setListId(abc);
-    };
-    createList();
-  }, [listId]);
+  // React.useEffect(() => {
+  //   if (listId !== null) return;
+  //   const createList = async () => {
+  //     const spaceId = await space.create();
+  //     setListId(spaceId);
+  //   };
+  //   createList();
+  // }, [listId]);
 
   React.useEffect(() => {
     // Note: React Native doesn't support SSE; this is just a polyfill.
@@ -84,6 +87,7 @@ const ReplicacheProvider: React.FC<{ children: ReactNode }> = ({
       value={{
         replicacheInstance: r,
         listId,
+        setListId,
       }}
     >
       {children}
