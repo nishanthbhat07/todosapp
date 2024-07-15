@@ -88,22 +88,25 @@ const Card: React.FC<{
           />
         )}
       </View>
-      <View className="flex-row gap-5">
-        <IconWrapper
-          onPress={handleUpdateTodo}
-          name={edit ? "check" : "edit"}
-          variant="MaterialIcons"
-          size={24}
-          color={colors.primaryColor}
-        />
-        <IconWrapper
-          onPress={deleteTodos(id)}
-          name="delete"
-          variant="MaterialIcons"
-          size={24}
-          color={colors.errorColor}
-        />
-      </View>
+
+      {!completed && (
+        <View className="flex-row gap-5">
+          <IconWrapper
+            onPress={handleUpdateTodo}
+            name={edit ? "check" : "edit"}
+            variant="MaterialIcons"
+            size={24}
+            color={colors.primaryColor}
+          />
+          <IconWrapper
+            onPress={deleteTodos(id)}
+            name="delete"
+            variant="MaterialIcons"
+            size={24}
+            color={colors.errorColor}
+          />
+        </View>
+      )}
     </Animated.View>
   );
 };

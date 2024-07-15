@@ -49,18 +49,7 @@ const ReplicacheProvider: React.FC<{ children: ReactNode }> = ({
     [listId],
   );
 
-  // React.useEffect(() => {
-  //   if (listId !== null) return;
-  //   const createList = async () => {
-  //     const spaceId = await space.create();
-  //     setListId(spaceId);
-  //   };
-  //   createList();
-  // }, [listId]);
-
   React.useEffect(() => {
-    // Note: React Native doesn't support SSE; this is just a polyfill.
-    // You probably want to setup a WebSocket connection via Pusher.
     const ev = new EventSource(
       `${BASEURL}/api/replicache/poke?spaceID=${listId}`,
       {

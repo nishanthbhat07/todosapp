@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   FlatList,
   Text,
@@ -6,63 +6,35 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useSubscribe } from "replicache-react";
-import { ReadTransaction } from "replicache";
 import { Dropdown } from "react-native-element-dropdown";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import Card from "../../components/card";
 import { useReplicache } from "../../contexts/replicache";
-import { useSpaceIDList } from "./hooks";
+import { useSpaceIDList, useTodos } from "./hooks";
 import IconWrapper from "../../components/icon";
 import styles from "./styles";
 import { colors } from "../../contants/colors";
 
 const TodoList = () => {
-  const { replicacheInstance, setListId, listId } = useReplicache();
+  const { setListId, listId } = useReplicache();
   const { spaceIds, createSpaceId } = useSpaceIDList();
-  const todos = useSubscribe(
-    replicacheInstance,
-    async (tx: ReadTransaction) => {
-      const list = await tx.scan().values().toArray();
-      return list;
-    },
-    [],
-    [replicacheInstance],
-  );
+  const {
+    toggleTodosCompleted,
+    addTodos,
+    updateTodos,
+    deleteTodos,
+    todoName,
+    setTodoName,
+    todos,
+  } = useTodos();
   todos.sort((a, b) => a.sort - b.sort);
-  const [todoName, setTodoName] = useState("");
 
-  const deleteTodos = (id: number) => {
-    return async () => {
-      await replicacheInstance.mutate.deleteTodo({
-        id,
-      });
-    };
-  };
-  const updateTodos = (id: number, todos: { title: string }) => {
-    return async () => {
-      await replicacheInstance.mutate.updateTodo({
-        id,
-        ...todos,
-      });
-    };
-  };
-
-  const addTodos = async () => {
-    await replicacheInstance.mutate.createTodo({
-      completed: false,
-      title: todoName.trim(),
-    });
-    setTodoName("");
-  };
-
-  const toggleTodosCompleted = (id: number, completed: boolean) => {
-    return async () => {
-      await replicacheInstance.mutate.updateTodo({
-        id,
-        completed,
-      });
-    };
+  const handleAddTodos = () => {
+    if (listId) {
+      addTodos();
+    } else {
+      createSpaceId(addTodos);
+    }
   };
 
   return (
@@ -82,7 +54,7 @@ const TodoList = () => {
         renderLeftIcon={() => (
           <IconWrapper
             style="mr-[3%] self-center items-center"
-            onPress={createSpaceId}
+            onPress={() => createSpaceId()}
             variant="MaterialIcons"
             name="add-circle"
             size={20}
@@ -100,7 +72,7 @@ const TodoList = () => {
           className="w-3/4 p-[3%] rounded-[5] border border-textColorSecondary"
         />
         <TouchableOpacity
-          onPress={addTodos}
+          onPress={handleAddTodos}
           activeOpacity={0.65}
           className="px-[4%] py-[3%] text-center rounded-[5] bg-primaryColor"
         >
